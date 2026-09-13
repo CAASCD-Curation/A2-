@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Granary 谷仓 — 一座谷仓的世界档案</title>
+<style>
+:root{
+  --ink:#111111; --paper:#f4f3f0; --mid:#8c8c8c; --line:#dcdad5; --dark:#0e0e0e;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--paper);color:var(--ink);
+  font-family:"Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",Arial,sans-serif;
+  -webkit-font-smoothing:antialiased}
+::selection{background:var(--ink);color:var(--paper)}
+a{color:inherit;text-decoration:none}
+
+/* ---------- NAV ---------- */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 4vw;height:58px;background:rgba(14,14,14,.92);backdrop-filter:blur(10px);
+  color:#f4f3f0;border-bottom:1px solid rgba(255,255,255,.12)}
+.brand{font-size:15px;letter-spacing:.28em;font-weight:600}
+.brand span{color:#9a9a9a;font-weight:400;letter-spacing:.14em;margin-left:10px;font-size:12px}
+nav ul{display:flex;list-style:none;gap:2.2vw}
+nav ul a{font-size:12.5px;letter-spacing:.18em;color:#bdbdbd;transition:color .25s;padding:6px 2px}
+nav ul a:hover,nav ul a.active{color:#fff}
+@media(max-width:720px){nav ul{gap:12px}nav ul a{font-size:11px;letter-spacing:.08em}.brand span{display:none}}
+
+/* ---------- HERO ---------- */
+header{min-height:100vh;background:var(--dark);color:#f4f3f0;display:flex;flex-direction:column;
+  justify-content:flex-end;padding:120px 4vw 0;position:relative;overflow:hidden}
+header::after{content:"";position:absolute;inset:0;pointer-events:none;
+  background-image:radial-gradient(rgba(255,255,255,.05) 1px,transparent 1px);background-size:5px 5px;opacity:.5}
+.hero-kicker{font-size:12px;letter-spacing:.5em;color:#8a8a8a;margin-bottom:2.5vh}
+.hero-title{font-size:clamp(64px,14.5vw,220px);line-height:.9;font-weight:700;letter-spacing:-.02em}
+.hero-title .cn{font-weight:200;margin-left:2vw}
+.hero-sub{display:grid;grid-template-columns:1fr 1fr;gap:4vw;margin:5vh 0 6vh;max-width:1100px}
+.hero-sub p{font-size:14px;line-height:2;color:#a9a9a9;max-width:46ch}
+.hero-index{border-top:1px solid rgba(255,255,255,.15)}
+.hero-index a{display:flex;align-items:baseline;gap:2vw;padding:16px 0;border-bottom:1px solid rgba(255,255,255,.15);
+  transition:padding-left .3s,color .3s;color:#cfcfcf}
+.hero-index a:hover{padding-left:1.5vw;color:#fff}
+.hero-index .no{font-size:11px;letter-spacing:.3em;color:#777}
+.hero-index .nm{font-size:clamp(18px,2.6vw,30px);font-weight:500;letter-spacing:.12em}
+.hero-index .en{margin-left:auto;font-size:11px;letter-spacing:.3em;color:#777;text-transform:uppercase}
+@media(max-width:720px){.hero-sub{grid-template-columns:1fr}}
+
+/* ---------- SECTIONS ---------- */
+section.cat{padding:110px 4vw 60px;border-top:1px solid var(--line)}
+.cat-head{display:grid;grid-template-columns:auto 1fr;gap:3vw;align-items:start;margin-bottom:70px}
+.cat-no{font-size:12px;letter-spacing:.35em;color:var(--mid);border:1px solid var(--ink);padding:8px 14px;white-space:nowrap}
+.cat-name{font-size:clamp(38px,6.5vw,84px);font-weight:700;line-height:1.05;letter-spacing:.04em}
+.cat-name em{display:block;font-style:normal;font-size:clamp(12px,1.3vw,15px);font-weight:400;
+  letter-spacing:.4em;color:var(--mid);margin-top:12px;text-transform:uppercase}
+.cat-desc{margin-top:22px;font-size:14px;line-height:2;color:#555;max-width:64ch}
+.poles{display:flex;flex-wrap:wrap;gap:18px;margin-top:26px;font-size:13px;letter-spacing:.15em}
+.poles b{font-weight:600}
+.poles .vs{color:var(--mid);letter-spacing:.05em}
+
+.sub{margin-bottom:70px}
+.sub-head{display:flex;align-items:baseline;gap:18px;border-bottom:2px solid var(--ink);
+  padding-bottom:14px;margin-bottom:34px}
+.sub-tag{font-size:11px;letter-spacing:.3em;background:var(--ink);color:var(--paper);padding:5px 10px}
+.sub-head h3{font-size:clamp(20px,3vw,32px);font-weight:600;letter-spacing:.1em}
+.sub-head .sub-en{font-size:11px;letter-spacing:.28em;color:var(--mid);text-transform:uppercase}
+.sub-head .cnt{margin-left:auto;font-size:12px;color:var(--mid);letter-spacing:.2em}
+.sub-note{font-size:12.5px;color:#777;letter-spacing:.05em;margin:-24px 0 30px}
+
+/* ---------- CARDS ---------- */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(215px,1fr));gap:14px}
+.card{perspective:1400px;aspect-ratio:3/4;cursor:pointer;position:relative}
+.card-inner{position:absolute;inset:0;transition:transform .8s cubic-bezier(.2,.75,.2,1);transform-style:preserve-3d}
+.card.flipped .card-inner{transform:rotateY(180deg)}
+.face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;overflow:hidden;background:#fff}
+.face.front{border:1px solid var(--line)}
+.face.front img{width:100%;height:100%;object-fit:cover;display:block;min-height:100%;
+  background:linear-gradient(135deg,#e8e6e2,#d4d2cc);
+  filter:grayscale(1) contrast(1.05);transition:filter .6s ease,transform .8s ease}
+.face.front img.err{object-fit:contain;padding:18%;filter:none;opacity:.55}
+.card:hover .face.front img{filter:grayscale(0);transform:scale(1.04)}
+.face.front .cid{position:absolute;left:0;top:0;background:var(--ink);color:#fff;
+  font-size:10px;letter-spacing:.2em;padding:4px 9px}
+.face.front .hint{position:absolute;right:0;bottom:0;background:rgba(255,255,255,.9);color:#333;
+  font-size:10px;letter-spacing:.2em;padding:4px 9px}
+.face.back{transform:rotateY(180deg);background:var(--dark);color:#e8e7e3;
+  padding:14px 14px;display:flex;flex-direction:column;border:1px solid var(--dark)}
+.face.back .bid{font-size:9px;letter-spacing:.28em;color:#888;margin-bottom:7px;flex-shrink:0}
+.face.back h4{font-size:13.5px;line-height:1.5;font-weight:600;margin-bottom:8px;letter-spacing:.02em;flex-shrink:0}
+.face.back .meta{font-size:10px;line-height:1.75;color:#9a9a9a;margin-bottom:7px;flex-shrink:0}
+.face.back .meta b{color:#cfcfcf;font-weight:500}
+.face.back .tags{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px;flex-shrink:0}
+.face.back .tags i{font-style:normal;font-size:9px;letter-spacing:.08em;border:1px solid #3a3a3a;
+  color:#aaa;padding:1px 6px}
+.face.back .note{font-size:10.5px;line-height:1.85;color:#bdbdbd;overflow-y:auto;flex:1;min-height:0;
+  scrollbar-width:thin;scrollbar-color:#444 transparent;overscroll-behavior:contain}
+.face.back .note::-webkit-scrollbar{width:3px}
+.face.back .note::-webkit-scrollbar-thumb{background:#444}
+.face.back .more{font-size:9px;letter-spacing:.25em;color:#777;text-align:right;margin-top:6px;flex-shrink:0}
+
+/* ---------- REVEAL ---------- */
+.rv{opacity:0;transform:translateY(28px);transition:opacity .7s ease,transform .7s ease}
+.rv.on{opacity:1;transform:none}
+
+/* ---------- FOOTER ---------- */
+footer{background:var(--dark);color:#8a8a8a;padding:70px 4vw;margin-top:60px}
+footer .big{font-size:clamp(28px,5vw,60px);font-weight:700;color:#f4f3f0;letter-spacing:.05em;line-height:1.2}
+footer p{margin-top:18px;font-size:12px;letter-spacing:.2em;line-height:2}
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="brand" href="#top">谷仓<span>GRANARY ARCHIVE</span></a>
+  <ul>
+    <li><a href="#art" data-cat="art">艺术档案</a></li>
+    <li><a href="#lit" data-cat="lit">文学意象</a></li>
+    <li><a href="#soc" data-cat="soc">社会素材</a></li>
+    <li><a href="#form" data-cat="form">形式灵感</a></li>
+  </ul>
+</nav>
+
+<header id="top">
+  <div class="hero-kicker">A WORLD ARCHIVE OF THE GRANARY · 一座谷仓的世界档案</div>
+  <h1 class="hero-title">GRANARY<span class="cn">谷仓</span></h1>
+  <div class="hero-sub">
+    <p>谷仓是文明最沉默的纪念碑。它收藏谷物，也收藏时间、制度、欲望与恐惧。本档案以两百个案例，从艺术、文学、社会与形式四个维度，检阅人类"藏粮"的图像史与观念史。</p>
+    <p>四大部类各自沿一条对立轴展开：古典与现代、咏叹与批判、国家与民间、藏与显。点击任意卡片翻转，图像为面，档案为背。</p>
+  </div>
+  <div class="hero-index" id="heroIndex"></div>
+</header>
+
+<main id="main"></main>
+
+<footer>
+  <div class="big">谷仓 GRANARY</div>
+  <p>艺术档案 50 · 文学意象 50 · 社会素材 50 · 形式灵感 50<br>
+  GRANARY ARCHIVE — 200 CASES · BLACK / WHITE / GRAY</p>
+</footer>
+
+<script src="img/data.js"></script>
+<script>
+const CATS = {
+  art:{no:'01',cn:'艺术档案',en:'Art Archive',
+    desc:'从勃鲁盖尔的麦浪到电影镜头里的筒仓，谷仓在图像中不断变换身份：它是丰收的圣像，也是分配正义的无声证人。',
+    poleA:'古典图景',poleB:'现代镜像',
+    subs:{a1:{name:'古典图景',en:'Classical Visions',note:'油画、绢本、画像砖与明器——传统媒介中的谷仓凝视。'},
+          a2:{name:'现代镜像',en:'Modern Mirrors',note:'摄影、电影与当代创作——谷仓进入现代媒介后的反射与变奏。'}}},
+  lit:{no:'02',cn:'文学意象',en:'Literary Imagery',
+    desc:'从《诗经》的"亦有高廪"到当代小说的隐喻装置，谷仓在文字里既是愿望的容器，也是讽喻的靶心。',
+    poleA:'丰饶咏叹',poleB:'批判隐喻',
+    subs:{l1:{name:'丰饶咏叹',en:'Odes to Abundance',note:'仓廪实而知礼节——谷仓作为丰足、储备与庇护的颂歌。'},
+          l2:{name:'批判隐喻',en:'Critiques & Metaphors',note:'从《伐檀》的质问到空谷仓的身份寓言——谷仓作为讽喻与象征。'}}},
+  soc:{no:'03',cn:'社会素材',en:'Social Material',
+    desc:'常平仓的平准智慧、义仓的乡社互助、粮票的排队记忆——储粮制度是理解中国社会的一把钥匙。',
+    poleA:'国家仓廪',poleB:'民间仓俗',
+    subs:{s1:{name:'国家仓廪',en:'State Granaries',note:'平准、漕运、税赋与战略储备——自上而下的制度经纬。'},
+          s2:{name:'民间仓俗',en:'Folk Practices',note:'义仓社仓、民族粮仓、共建会与当代活化——自下而上的互助与记忆。'}}},
+  form:{no:'04',cn:'形式灵感',en:'Formal Inspiration',
+    desc:'谷仓的形式史是一部"藏"与"显"的辩证法：从封闭的防御体量，到被转译、被打开、被再利用的当代空间。',
+    poleA:'藏 · 原型',poleB:'显 · 转译',
+    subs:{f1:{name:'藏 · 原型的形式',en:'The Archetype',note:'封闭体积、防御与纪念性——谷仓形式的起点是"藏"的宣言。'},
+          f2:{name:'显 · 当代的转译',en:'The Translation',note:'改造、艺术与日常挪用——谷仓语汇在当代的打开方式。'}}}
+};
+const ORDER = ['art','lit','soc'];
+ORDER.push('form');
+const SUBORDER = {art:['a1','a2'],lit:['l1','l2'],soc:['s1','s2'],form:['f1','f2']};
+
+function esc(s){return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;')}
+
+// placeholder: minimal granary icon (shown if an image ever fails to load)
+const PH = 'data:image/svg+xml;utf8,' + encodeURIComponent(
+`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120"><rect width="120" height="120" fill="none"/><g fill="none" stroke="%23333" stroke-width="4"><path d="M20 60 L60 30 L100 60"/><path d="M28 60 V100 H92 V60"/><rect x="52" y="74" width="16" height="26"/><path d="M36 68 H84"/></g></svg>`);
+
+// mobile devices load images one-by-one from external files to avoid memory pressure
+const MOBILE = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent)
+  || (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 4 && navigator.deviceMemory && navigator.deviceMemory <= 4);
+
+// retry a failed image up to 3 times (cache-busting), then fall back to placeholder
+function imgRetry(img){
+  const t = +(img.dataset.tries||0);
+  if(t < 3){
+    img.dataset.tries = t+1;
+    const base = img.dataset.src || (img.dataset.src = img.src.split('?')[0]);
+    setTimeout(()=>{ img.src = base + '?r=' + (t+1); }, 700*(t+1));
+  }else{
+    img.onerror = null;
+    img.classList.add('err');
+    img.src = PH;
+  }
+}
+// safety net: any image still broken after 8s gets retried once more
+window.addEventListener('load', ()=>setTimeout(()=>{
+  document.querySelectorAll('.face.front img').forEach(i=>{
+    if(i.complete && i.naturalWidth===0 && !i.classList.contains('err')) imgRetry(i);
+  });
+}, 8000));
+
+// hero index
+document.getElementById('heroIndex').innerHTML = ORDER.map(k=>{
+  const c = CATS[k];
+  return `<a href="#${k}"><span class="no">${c.no}</span><span class="nm">${c.cn}</span><span class="en">${c.en} · 50</span></a>`;
+}).join('');
+
+// sections
+let html = '';
+for(const k of ORDER){
+  const c = CATS[k];
+  html += `<section class="cat" id="${k}">
+    <div class="cat-head rv">
+      <div class="cat-no">${c.no} / 04</div>
+      <div>
+        <h2 class="cat-name">${c.cn}<em>${c.en}</em></h2>
+        <p class="cat-desc">${c.desc}</p>
+        <div class="poles"><b>${c.poleA}</b><span class="vs">× 对立 ×</span><b>${c.poleB}</b></div>
+      </div>
+    </div>`;
+  for(const sk of SUBORDER[k]){
+    const s = c.subs[sk];
+    const items = CASES.filter(d=>d.cat===k && d.sub===sk);
+    html += `<div class="sub rv">
+      <div class="sub-head">
+        <span class="sub-tag">${c.no}${sk==='a1'||sk==='l1'||sk==='s1'||sk==='f1'?'·A':'·B'}</span>
+        <h3>${s.name}</h3><span class="sub-en">${s.en}</span>
+        <span class="cnt">${items.length} CASES</span>
+      </div>
+      <p class="sub-note">${s.note}</p>
+      <div class="grid">`;
+    for(const d of items){
+      const tags = d.tags.slice(0,4).map(t=>`<i>${esc(t)}</i>`).join('');
+      const meta = [d.source?`<b>出处</b>　${esc(d.source)}`:'', d.era?`<b>年代</b>　${esc(d.era)}`:''].filter(Boolean).join('<br>');
+      html += `<div class="card" onclick="this.classList.toggle('flipped')">
+        <div class="card-inner">
+          <div class="face front">
+            <img loading="lazy" decoding="async" src="${d.img}" alt="${esc(d.title)}" onerror="imgRetry(this)">
+            <span class="cid">${esc(d.id)}</span><span class="hint">FLIP ↻</span>
+          </div>
+          <div class="face back">
+            <div class="bid">${esc(d.id)} — ${c.cn}</div>
+            <h4>${esc(d.title)}</h4>
+            <div class="meta">${meta}</div>
+            <div class="tags">${tags}</div>
+            <div class="note" onclick="event.stopPropagation()" onwheel="event.stopPropagation()">${esc(d.note)}</div>
+            <div class="more">SCROLL ↓</div>
+          </div>
+        </div>
+      </div>`;
+    }
+    html += `</div></div>`;
+  }
+  html += `</section>`;
+}
+document.getElementById('main').innerHTML = html;
+
+// reveal on scroll
+const io = new IntersectionObserver(es=>es.forEach(e=>{
+  if(e.isIntersecting){e.target.classList.add('on');io.unobserve(e.target)}
+}),{threshold:.08});
+document.querySelectorAll('.rv').forEach(el=>io.observe(el));
+
+// hide "SCROLL ↓" hint when the note fits without scrolling
+document.querySelectorAll('.face.back').forEach(b=>{
+  const n=b.querySelector('.note'), m=b.querySelector('.more');
+  const check=()=>{ if(n.scrollHeight<=n.clientHeight+2) m.style.visibility='hidden'; };
+  check(); new ResizeObserver(check).observe(n);
+});
+
+// nav active state
+const links = document.querySelectorAll('nav ul a');
+const secs = ORDER.map(k=>document.getElementById(k));
+window.addEventListener('scroll',()=>{
+  let cur = null;
+  for(const s of secs){ if(s.getBoundingClientRect().top < 120) cur = s.id; }
+  links.forEach(l=>l.classList.toggle('active', l.dataset.cat===cur));
+},{passive:true});
+</script>
+</body>
+</html>
